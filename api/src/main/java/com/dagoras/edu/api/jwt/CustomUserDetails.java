@@ -1,8 +1,9 @@
 package com.dagoras.edu.api.jwt;
 
-import com.dagoras.edu.api.entity.User;
 import com.dagoras.edu.common.utils.Constant;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,9 +15,14 @@ import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
-    private User user;
+    private String username;
+    private String password;
+    private String email;
+    private String role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -27,12 +33,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return user.getUserName();
+        return username;
     }
 
     @Override

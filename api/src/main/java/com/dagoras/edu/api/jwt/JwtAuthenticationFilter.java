@@ -59,17 +59,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private UserDetails getUserDetails(String token) {
-        CustomUserDetails customUserDetails = new CustomUserDetails();
-        User user = new User();
-        String jwtSubject = tokenProvider.getSubjectFromJwt(token);
-        user.setUserName(jwtSubject);
-        customUserDetails.setUser(user);
-        return customUserDetails;
+        CustomUserDetails userDetails = new CustomUserDetails();
+        String jwtSubject = tokenProvider.getSubject(token);
+
+        userDetails.setUsername(jwtSubject);
+        return userDetails;
     }
 
     private void setAuthenticationContext(String token, HttpServletRequest request) {
         UserDetails userDetails = getUserDetails(token);
-        User user = userRepository.findByUserName(userDetails.getUsername());
+        User user = userRepository.findByUsername(userDetails.getUsername());
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(user.getRole()));
 
