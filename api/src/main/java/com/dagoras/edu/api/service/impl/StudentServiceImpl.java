@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.Optional;
 
 @Service
@@ -35,20 +36,36 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student create(StudentCreateRequest request) {
-        Student st;
-        st = studentRepository.findByEmail(request.getEmail());
-        if (!ObjectUtils.allNull(st)) {
-            throw new BusinessException(HttpStatus.CONFLICT, "Email đã tồn tại");
-        }
-        st = studentRepository.findByPhoneNumber(request.getPhoneNumber());
-        if (!ObjectUtils.allNull(st)) {
-            throw new BusinessException(HttpStatus.CONFLICT, "Số điện thoại đã tồn tại");
-        }
+        // Kiểm tra email và phoneNumber đã tồn tại chưa
+        checkEmailExists(request.getEmail());
+        checkPhoneNumberExists(request.getPhoneNumber());
+
         Student student = studentMapper.convertValue(request);
         student.setCreateDate(LocalDateTime.now());
         student.setIsDelete(false);
         studentRepository.save(student);
         return student;
+    }
+
+    @Override
+    public StudentResponse createEnvironmentDev(StudentCreateRequest request) {
+        checkEmailExists(request.getEmail());
+        checkPhoneNumberEncodeExists(request.getPhoneNumber());
+
+        String encryptPhoneNumber = Base64.getEncoder().encodeToString(request.getPhoneNumber().getBytes());
+
+        Student student = new Student();
+        student.setName(request.getName());
+        student.setAge(request.getAge());
+        student.setPhoneNumber(encryptPhoneNumber);
+        student.setDob(request.getDob());
+        student.setIntro(request.getIntro());
+        student.setEmail(request.getEmail());
+        student.setMajors(request.getMajors());
+        student.setCreateDate(LocalDateTime.now());
+        student.setIsDelete(false);
+        studentRepository.save(student);
+        return studentMapper.convertToResponse(student);
     }
 
     @Override
@@ -86,5 +103,32 @@ public class StudentServiceImpl implements StudentService {
             throw new BusinessException(HttpStatus.NOT_FOUND, "Student ID " + id + " Not Found");
         }
         return student.get();
+    }
+
+    private boolean checkEmailExists(String email) {
+        Student st;
+        st = studentRepository.findByEmail(email);
+        if (!ObjectUtils.allNull(st)) {
+            throw new BusinessException(HttpStatus.CONFLICT, "Email đã tồn tại");
+        }
+        return true;
+    }
+
+    private boolean checkPhoneNumberExists(String phoneNumber) {
+        Student st = studentRepository.findByPhoneNumber(phoneNumber);
+        if (!ObjectUtils.allNull(st)) {
+            throw new BusinessException(HttpStatus.CONFLICT, "Số điện thoại đã tồn tại");
+        }
+        return true;
+    }
+
+    private boolean checkPhoneNumberEncodeExists(String phoneNumber) {
+        Student st;
+        String encryptPhoneNumber = Base64.getEncoder().encodeToString(phoneNumber.getBytes());
+        st = studentRepository.findByPhoneNumber(encryptPhoneNumber);
+        if (!ObjectUtils.allNull(st)) {
+            throw new BusinessException(HttpStatus.CONFLICT, "Số điện thoại đã tồn tại");
+        }
+        return true;
     }
 }

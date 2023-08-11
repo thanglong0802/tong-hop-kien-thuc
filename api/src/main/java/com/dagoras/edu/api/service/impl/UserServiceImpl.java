@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
         u.setEmail(request.getEmail());
         u.setCreateDate(LocalDateTime.now());
         u.setIsDelete(false);
-        u.setRole("ROLE_USER");
+        u.setRole("USER");
         userRepository.save(u);
         return "Đăng ký tài khoản thành công";
     }
@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
         u.setEmail(request.getEmail());
         u.setCreateDate(LocalDateTime.now());
         u.setIsDelete(false);
-        u.setRole("ROLE_" + StringUtils.upperCase(request.getRole()));
+        u.setRole(StringUtils.upperCase(request.getRole()));
         userRepository.save(u);
         return "Đăng ký tài khoản thành công";
     }

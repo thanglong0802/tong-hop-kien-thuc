@@ -19,6 +19,7 @@ public class StudentCreateRequest {
     @NotNull(message = "Tuổi không được để trống")
     private Integer age;
     @NotBlank(message = "Số điện thoại không được để trống")
+    @Size(min = 10, message = "Số điện thoại tối thiểu 10 số")
     private String phoneNumber;
     private Date dob;
     @NotBlank(message = "Giới thiệu không được để trống")

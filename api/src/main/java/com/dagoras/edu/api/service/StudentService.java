@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 public interface StudentService {
     Page<StudentResponse> getAllOrSearch(PagingRequest request);
     Student create(StudentCreateRequest request);
+    StudentResponse createEnvironmentDev(StudentCreateRequest request);
     Student update(StudentUpdateRequest request);
     StudentResponse findById(Long id);
     String delete(Long id);

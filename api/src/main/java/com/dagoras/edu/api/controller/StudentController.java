@@ -5,6 +5,7 @@ import com.dagoras.edu.api.domain.student.StudentResponse;
 import com.dagoras.edu.api.domain.student.StudentUpdateRequest;
 import com.dagoras.edu.api.entity.Student;
 import com.dagoras.edu.api.service.StudentService;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +21,15 @@ public class StudentController {
     }
 
     @PostMapping
+    @Profile("local")
     public ResponseEntity<Student> create(@RequestBody @Valid StudentCreateRequest request) {
         return ResponseEntity.ok().body(studentService.create(request));
+    }
+
+    @PostMapping("/dev")
+    @Profile("dev")
+    public ResponseEntity<StudentResponse> createEnvironmentDev(@RequestBody @Valid StudentCreateRequest request) {
+        return ResponseEntity.ok().body(studentService.createEnvironmentDev(request));
     }
 
     @PutMapping

@@ -1,6 +1,5 @@
 package com.dagoras.edu.api.exception;
 
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -8,7 +7,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.persistence.NonUniqueResultException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +30,14 @@ public class CustomExceptionHandler {
             errors.put(fieldName, message);
         });
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {MessageException.class})
+    public ResponseEntity<?> handleMessageException(MessageException ex) {
+        BaseException exception = new BaseException();
+        exception.setMessage(ex.getMessage());
+        exception.setStatus(null);
+        return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
     }
 
 }
