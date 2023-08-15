@@ -11,11 +11,16 @@ import com.dagoras.edu.api.repository.StudentRepository;
 import com.dagoras.edu.api.service.StudentService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,8 +35,28 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Page<StudentResponse> getAllOrSearch(PagingRequest request) {
-        return null;
+    public List<Student> findAll() {
+        return studentRepository.findAll();
+    }
+
+    @Override
+    public Page<Student> getAllOrSearch(PagingRequest request) {
+        Pageable pageable = PageRequest.of(request.getCurrentPage(), request.getPageSize());
+        Page<Student> studentPage;
+        List<Student> responseList = new ArrayList<>();
+        if (!ObjectUtils.allNull(request.getTextSearch())) {
+            studentPage = studentRepository.findAllByNameContaining(request.getTextSearch(), pageable);
+        } else {
+            studentPage = studentRepository.findAll(pageable);
+        }
+
+        if (studentPage != null && studentPage.hasContent()) {
+            for (Student student : studentPage) {
+                responseList.add(student);
+            }
+        }
+
+        return new PageImpl<>(responseList, pageable, studentPage != null ? studentPage.getTotalElements() : 0);
     }
 
     @Override
@@ -84,17 +109,17 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public StudentResponse findById(Long id) {
+    public Student findById(Long id) {
         Student student = getStudentById(id);
-        return studentMapper.convertToResponse(student);
+        return student;
     }
 
     @Override
-    public String delete(Long id) {
+    public Boolean delete(Long id) {
         Student student = getStudentById(id);
         student.setIsDelete(true);
         studentRepository.save(student);
-        return "Xóa thành công";
+        return true;
     }
 
     private Student getStudentById(Long id) {

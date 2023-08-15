@@ -39,16 +39,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.cors();
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeRequests()
                 .antMatchers(HttpMethod.GET).permitAll()
-                .antMatchers(HttpMethod.POST, "/user").permitAll()
-                .antMatchers(HttpMethod.POST, "/user/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/user/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/student").hasAnyAuthority("ADMIN", "TEACHER")
                 .antMatchers(HttpMethod.POST, "/student/dev").hasAnyAuthority("ADMIN", "TEACHER")
+                .antMatchers(HttpMethod.POST, "/student/search").permitAll()
                 .antMatchers(HttpMethod.PUT, "/student").hasAnyAuthority("ADMIN", "USER")
+                .antMatchers(HttpMethod.PATCH).hasAnyAuthority("ADMIN")
                 .anyRequest().authenticated();
 
         http.exceptionHandling()

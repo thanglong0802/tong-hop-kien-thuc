@@ -1,6 +1,7 @@
 package com.dagoras.edu.api.entity;
 
 import lombok.*;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +15,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Where(clause = "is_delete = 0")
 public class Student extends BaseEntity {
     private String name;
     private Integer age;

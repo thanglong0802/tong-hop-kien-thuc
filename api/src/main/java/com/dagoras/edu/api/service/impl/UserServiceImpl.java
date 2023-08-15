@@ -91,8 +91,8 @@ public class UserServiceImpl implements UserService {
             String createToken = tokenProvider.createToken(user);
             UserResponse userResponse = new UserResponse(createToken, user.getUsername(), user.getRole());
             return ResponseEntity.ok().body(userResponse);
-        } catch (BadCredentialsException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } catch (Exception ex) {
+            throw new BusinessException(HttpStatus.BAD_REQUEST, "User name or password does not exist");
         }
     }
 }

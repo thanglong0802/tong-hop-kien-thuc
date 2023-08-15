@@ -7,12 +7,15 @@ import com.dagoras.edu.api.domain.student.StudentUpdateRequest;
 import com.dagoras.edu.api.entity.Student;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 public interface StudentService {
-    Page<StudentResponse> getAllOrSearch(PagingRequest request);
+    List<Student> findAll();
+    Page<Student> getAllOrSearch(PagingRequest request);
     Student create(StudentCreateRequest request);
     StudentResponse createEnvironmentDev(StudentCreateRequest request);
     Student update(StudentUpdateRequest request);
-    StudentResponse findById(Long id);
-    String delete(Long id);
+    Student findById(Long id);
+    Boolean delete(Long id);
 
 }

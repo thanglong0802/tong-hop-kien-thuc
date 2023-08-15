@@ -25,7 +25,7 @@ public class StudentMapper {
         }
 
         Student student = new Student();
-        student.setName(request.getName());
+        student.setName(request.getName().trim());
         student.setAge(request.getAge());
         student.setPhoneNumber(request.getPhoneNumber());
         student.setDob(request.getDob());
