@@ -15,6 +15,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -96,6 +98,13 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Student update(StudentUpdateRequest request) {
         Student student = getStudentById(request.getId());
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String getUserNameFromSecurityContextHolder = authentication.getName();
+        if (!student.getUserName().equals(getUserNameFromSecurityContextHolder)) {
+            throw new BusinessException(HttpStatus.FORBIDDEN, "Bạn không có quyền chỉnh sửa thông tin của người khác");
+        }
+
         student.setAge(request.getAge());
         student.setName(request.getName());
         student.setPhoneNumber(request.getPhoneNumber());

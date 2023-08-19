@@ -4,10 +4,12 @@ import com.dagoras.edu.api.domain.user.UserCreateAdminRequest;
 import com.dagoras.edu.api.domain.user.UserCreateRequest;
 import com.dagoras.edu.api.domain.user.UserLoginRequest;
 import com.dagoras.edu.api.domain.user.UserResponse;
+import com.dagoras.edu.api.entity.Student;
 import com.dagoras.edu.api.entity.User;
 import com.dagoras.edu.api.exception.BusinessException;
 import com.dagoras.edu.api.jwt.CustomUserDetails;
 import com.dagoras.edu.api.jwt.TokenProvider;
+import com.dagoras.edu.api.repository.StudentRepository;
 import com.dagoras.edu.api.repository.UserRepository;
 import com.dagoras.edu.api.service.UserService;
 import org.apache.commons.lang3.ObjectUtils;
@@ -15,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,12 +31,14 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final AuthenticationManager authManager;
+    private final StudentRepository studentRepository;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, TokenProvider tokenProvider, AuthenticationManager authManager) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, TokenProvider tokenProvider, AuthenticationManager authManager, StudentRepository studentRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
         this.authManager = authManager;
+        this.studentRepository = studentRepository;
     }
 
     @Override
@@ -49,6 +52,9 @@ public class UserServiceImpl implements UserService {
         if (!ObjectUtils.allNull(user)) {
             throw new BusinessException(HttpStatus.CONFLICT, "Email already exists");
         }
+
+        checkPhoneNumberExists(request.getPhoneNumber());
+
         User u = new User();
         u.setUsername(request.getUsername());
         u.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -57,7 +63,25 @@ public class UserServiceImpl implements UserService {
         u.setIsDelete(false);
         u.setRole("USER");
         userRepository.save(u);
+
+        // Tạo tài khoản user kèm 1 student
+        Student student = new Student();
+        student.setUserName(request.getUsername());
+        student.setEmail(request.getEmail());
+        student.setPhoneNumber(request.getPhoneNumber());
+        student.setCreateDate(LocalDateTime.now());
+        student.setIsDelete(false);
+        studentRepository.save(student);
+
         return "Đăng ký tài khoản thành công";
+    }
+
+    private boolean checkPhoneNumberExists(String phoneNumber) {
+        Student st = studentRepository.findByPhoneNumber(phoneNumber);
+        if (!ObjectUtils.allNull(st)) {
+            throw new BusinessException(HttpStatus.CONFLICT, "Số điện thoại đã tồn tại");
+        }
+        return true;
     }
 
     @Override
