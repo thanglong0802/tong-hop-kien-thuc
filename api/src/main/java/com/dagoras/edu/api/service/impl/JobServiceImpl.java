@@ -19,7 +19,6 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public Integer countStudentById() {
-        Job job = new Job();
         Integer countStudent = studentRepository.countStudentById();
         job.setCountStudent(countStudent);
         jobRepository.save(job);
@@ -28,7 +27,6 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public Integer countTeacherById() {
-        Job job = new Job();
         Integer countTeacher = studentRepository.countTeacherById();
         job.setCountTeacher(countTeacher);
         jobRepository.save(job);

@@ -23,6 +23,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     Integer countStudentByAge(Integer age);
     @Query(value = "select count(st.id) from tbl_student st inner join tbl_student_subject ss on st.id = ss.student_id " +
             "inner join tbl_subject su on ss.subject_id = su.id " +
-            "where su.name like concat('%', :subjectName, '%')", nativeQuery = true)
+            "where su.name like concat('%', :subjectName, '%') " +
+            "and st.is_delete = 0 ", nativeQuery = true)
     Integer studyTheSameSubject(@Param("subjectName") String subjectName);
 }
