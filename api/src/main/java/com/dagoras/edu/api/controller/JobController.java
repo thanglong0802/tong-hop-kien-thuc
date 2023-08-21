@@ -14,12 +14,12 @@ public class JobController {
         this.jobService = jobService;
     }
 
-    @GetMapping("/student-quantity")
+    @GetMapping("/student")
     public ResponseEntity<Integer> studentQuantity() {
         return ResponseEntity.ok().body(jobService.countStudentById());
     }
 
-    @GetMapping("/teacher-quantity")
+    @GetMapping("/teacher")
     public ResponseEntity<Integer> teacherQuantity() {
         return ResponseEntity.ok().body(jobService.countTeacherById());
     }

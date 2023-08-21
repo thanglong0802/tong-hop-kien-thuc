@@ -62,6 +62,11 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public List<Student> findByUserName(String userName) {
+        return studentRepository.findByUserName(userName);
+    }
+
+    @Override
     public Student create(StudentCreateRequest request) {
         // Kiểm tra email và phoneNumber đã tồn tại chưa
         checkEmailExists(request.getEmail());

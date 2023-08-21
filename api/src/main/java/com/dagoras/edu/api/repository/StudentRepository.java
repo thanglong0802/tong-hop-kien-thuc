@@ -8,10 +8,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
     Student findByEmail(String email);
     Student findByPhoneNumber(String phoneNumber);
+    List<Student> findByUserName(String userName);
     Page<Student> findAllByNameContaining(String textSearch, Pageable pageable);
     @Query(value = "select count(st.id) from tbl_student st where st.is_delete = 0", nativeQuery = true)
     Integer countStudentById();

@@ -34,6 +34,11 @@ public class StudentController {
         return ResponseEntity.ok().body(studentService.getAllOrSearch(request));
     }
 
+    @GetMapping("/find-username")
+    public ResponseEntity<List<Student>> findByUserName(@RequestParam String userName) {
+        return ResponseEntity.ok().body(studentService.findByUserName(userName));
+    }
+
     @PostMapping
     @Profile("local")
     public ResponseEntity<Student> create(@RequestBody @Valid StudentCreateRequest request) {

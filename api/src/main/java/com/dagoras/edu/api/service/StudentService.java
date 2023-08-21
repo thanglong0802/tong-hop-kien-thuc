@@ -12,6 +12,7 @@ import java.util.List;
 public interface StudentService {
     List<Student> findAll();
     Page<Student> getAllOrSearch(PagingRequest request);
+    List<Student> findByUserName(String username);
     Student create(StudentCreateRequest request);
     StudentResponse createEnvironmentDev(StudentCreateRequest request);
     Student update(StudentUpdateRequest request);
